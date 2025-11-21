@@ -11,15 +11,19 @@ import org.example.backendjava.booking_to_doctore_service.model.dto.DoctorAppion
 import org.example.backendjava.booking_to_doctore_service.model.entity.Appointment;
 import org.example.backendjava.autth_service.model.entity.Doctor;
 import org.example.backendjava.autth_service.model.entity.Patient;
+import org.example.backendjava.booking_to_doctore_service.model.entity.AppointmentStatus;
+import org.example.backendjava.booking_to_doctore_service.model.entity.CurrentPatientStatus;
 import org.example.backendjava.booking_to_doctore_service.repository.AppointmentRepository;
 import org.example.backendjava.autth_service.repository.DoctorRepository;
 import org.example.backendjava.autth_service.repository.PatientRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Сервис для работы с записями к врачам.
+ */
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
@@ -32,36 +36,48 @@ public class AppointmentService {
 
     public Appointment registerAppointment(AppointmentRequestDto dto) {
 
+        // Проверяем, существует ли врач
         Doctor doctor = doctorRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with id: " + dto.getDoctorId() + " not found"));
 
+        // Получаем текущего пользователя (пациента)
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         Long id = userRepository.findIdByUsername(name);
 
+        // Проверяем, существует ли пациент
         Patient patient = patientRepository.findByUserId(id)
                 .orElseThrow(() -> new PatientNotFoundException("Patient with user id: " + id + " not found"));
 
+        // Проверяем, не занят ли врач в это время
         if (appointmentRepository.existsByDoctorIdAndDateTime(doctor.getId(), dto.getDateTime())) {
             throw new DoctorAlreadyBookedException("Doctor is already booked at this time: " + dto.getDateTime());
         }
 
+        // Создаем новый статус пациента
+        CurrentPatientStatus status = new CurrentPatientStatus();
+        status.setStatus(AppointmentStatus.SCHEDULED); // По умолчанию - запланирована
+        status.setSymptomsDescribedByPatient(null); // Симптомы пациент заполнит позже
+        status.setSelfTreatmentMethodsTaken(null); // Методы самолечения пациент заполнит позже
+
+        // Создаем запись к врачу
         Appointment appointment = new Appointment();
         appointment.setDoctor(doctor);
         appointment.setPatient(patient);
         appointment.setDateTime(dto.getDateTime());
-        appointment.setStatus("");
+        appointment.setCurrentPatientStatus(status); // Связываем со статусом
 
+        // Сохраняем в базу данных
         return appointmentRepository.save(appointment);
     }
 
     public List<DoctorAppiontmentResponseDto> getAppointmentsForDoctor(Long doctorId) {
         return appointmentRepository.findByDoctorId(doctorId)
-                .stream().map(appointmentMapper::toDto)
+                .stream()
+                .map(appointmentMapper::toDto) // Преобразуем в DTO
                 .toList();
     }
 
     public List<Appointment> getAppointmentsForPatient(Long patientId) {
         return appointmentRepository.findByPatientId(patientId);
     }
-
 }
