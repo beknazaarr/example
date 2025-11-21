@@ -1,7 +1,6 @@
 package org.example.backendjava.booking_to_doctore_service.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,11 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class AppointmentRequestDto {
-
     private Long doctorId;
-
-    @JsonIgnore  // <-- ДОБАВИТЬ ЭТУ АННОТАЦИЮ
-    private Long patientId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateTime;
