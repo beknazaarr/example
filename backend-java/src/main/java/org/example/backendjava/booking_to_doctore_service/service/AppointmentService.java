@@ -21,9 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Сервис для работы с записями к врачам.
- */
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
@@ -41,30 +38,30 @@ public class AppointmentService {
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with id: " + dto.getDoctorId() + " not found"));
 
         // Получаем текущего пользователя (пациента)
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long id = userRepository.findIdByUsername(name);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId = userRepository.findIdByUsername(username);
 
         // Проверяем, существует ли пациент
-        Patient patient = patientRepository.findByUserId(id)
-                .orElseThrow(() -> new PatientNotFoundException("Patient with user id: " + id + " not found"));
+        Patient patient = patientRepository.findByUserId(userId)
+                .orElseThrow(() -> new PatientNotFoundException("Patient with user id: " + userId + " not found"));
 
         // Проверяем, не занят ли врач в это время
-        if (appointmentRepository.existsByDoctorIdAndDateTime(doctor.getId(), dto.getDateTime())) {
+        if (appointmentRepository.existsByDoctorIdAndDateTime(dto.getDoctorId(), dto.getDateTime())) {
             throw new DoctorAlreadyBookedException("Doctor is already booked at this time: " + dto.getDateTime());
         }
 
         // Создаем новый статус пациента
         CurrentPatientStatus status = new CurrentPatientStatus();
-        status.setStatus(AppointmentStatus.SCHEDULED); // По умолчанию - запланирована
-        status.setSymptomsDescribedByPatient(null); // Симптомы пациент заполнит позже
-        status.setSelfTreatmentMethodsTaken(null); // Методы самолечения пациент заполнит позже
+        status.setStatus(AppointmentStatus.SCHEDULED);
+        status.setSymptomsDescribedByPatient(dto.getSymptomsDescribedByPatient());
+        status.setSelfTreatmentMethodsTaken(dto.getSelfTreatmentMethodsTaken());
 
         // Создаем запись к врачу
         Appointment appointment = new Appointment();
         appointment.setDoctor(doctor);
         appointment.setPatient(patient);
         appointment.setDateTime(dto.getDateTime());
-        appointment.setCurrentPatientStatus(status); // Связываем со статусом
+        appointment.setCurrentPatientStatus(status);
 
         // Сохраняем в базу данных
         return appointmentRepository.save(appointment);
@@ -73,7 +70,7 @@ public class AppointmentService {
     public List<DoctorAppiontmentResponseDto> getAppointmentsForDoctor(Long doctorId) {
         return appointmentRepository.findByDoctorId(doctorId)
                 .stream()
-                .map(appointmentMapper::toDto) // Преобразуем в DTO
+                .map(appointmentMapper::toDto)
                 .toList();
     }
 
