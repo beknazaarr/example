@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "toolbarmenuapp"
+rootProject.name = "7_task_kotlin"
 include(":app")
  
