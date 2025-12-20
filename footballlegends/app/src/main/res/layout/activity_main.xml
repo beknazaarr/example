@@ -1,0 +1,172 @@
+<!-- activity_main.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    tools:context=".MainActivity">
+
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_toolbar"
+        android:elevation="8dp"
+        app:title="⚽ Футбольные Легенды"
+        app:titleTextColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- GridView -->
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:numColumns="2"
+        android:verticalSpacing="16dp"
+        android:horizontalSpacing="16dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        android:stretchMode="columnWidth"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- item_player.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="180dp"
+app:cardCornerRadius="20dp"
+app:cardElevation="8dp"
+app:cardBackgroundColor="@android:color/white"
+app:strokeColor="#4CAF50"
+app:strokeWidth="2dp">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="@drawable/gradient_card">
+
+    <!-- Emoji/Icon -->
+    <TextView
+        android:id="@+id/tvEmoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="60sp"
+        android:layout_marginBottom="8dp"
+        android:text="⚽"/>
+
+    <!-- Player Name -->
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#1B5E20"
+        android:gravity="center"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text="Player Name"/>
+
+    <!-- Country -->
+    <TextView
+        android:id="@+id/tvCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="#4CAF50"
+        android:layout_marginTop="4dp"
+        android:text="Country"/>
+
+</LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+
+    <!-- menu_main.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<item
+    android:id="@+id/action_search"
+    android:icon="@android:drawable/ic_menu_search"
+    android:title="Поиск"
+    app:showAsAction="ifRoom" />
+
+<item
+    android:id="@+id/action_favorites"
+    android:icon="@android:drawable/star_big_on"
+    android:title="Избранное"
+    app:showAsAction="ifRoom" />
+
+<item
+    android:id="@+id/action_settings"
+    android:icon="@android:drawable/ic_menu_preferences"
+    android:title="Настройки"
+    app:showAsAction="never" />
+
+</menu>
+
+    <!-- drawable/gradient_toolbar.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<gradient
+    android:angle="135"
+    android:startColor="#1B5E20"
+    android:centerColor="#2E7D32"
+    android:endColor="#4CAF50"
+    android:type="linear" />
+</shape>
+
+    <!-- drawable/gradient_card.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<gradient
+    android:angle="180"
+    android:startColor="#E8F5E9"
+    android:endColor="#FFFFFF"
+    android:type="linear" />
+</shape>
+
+    <!-- values/colors.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+<resources>
+<color name="black">#FF000000</color>
+<color name="white">#FFFFFFFF</color>
+<color name="green_primary">#4CAF50</color>
+<color name="green_dark">#1B5E20</color>
+<color name="green_light">#E8F5E9</color>
+</resources>
+
+    <!-- values/strings.xml -->
+<resources>
+<string name="app_name">Football Legends</string>
+</resources>
+
+    <!-- values/themes.xml -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+<style name="Base.Theme.FootballLegends" parent="Theme.Material3.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/green_primary</item>
+    <item name="colorPrimaryVariant">@color/green_dark</item>
+    <item name="colorOnPrimary">@color/white</item>
+    <item name="android:statusBarColor">@color/green_dark</item>
+</style>
+
+<style name="Theme.FootballLegends" parent="Base.Theme.FootballLegends" />
+</resources>
