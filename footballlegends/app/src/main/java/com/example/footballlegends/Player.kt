@@ -1,3 +1,5 @@
+package com.example.footballlegends
+
 data class Player(
     val name: String,
     val emoji: String,
